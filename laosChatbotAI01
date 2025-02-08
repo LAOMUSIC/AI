@@ -1,0 +1,38 @@
+from textblob import TextBlob
+
+# Intent dictionary to match user input
+intents = {
+    "hours": {
+        "keywords": ["hours", "open", "close"],
+        "response": "We are open from 9 AM to 5 PM, Monday to Friday."
+    },
+    "return": {
+        "keywords": ["refund", "moneyback", "return"],
+        "response": "I'd be happy to help you with the return process. Let me transfer you to a live agent."
+    }
+}
+
+def get_response(message):
+    message = message.lower()
+
+    # Check predefined intents first
+    for intent_data in intents.values():
+        if any(word in message for word in intent_data["keywords"]):
+            return intent_data["response"]
+
+    # Sentiment analysis
+    sentiment = TextBlob(message).sentiment.polarity
+    if sentiment > 0:
+        return "That's so great to hear!"
+    elif sentiment < 0:
+        return "I am so sorry to hear that. How can I help?"
+    else:
+        return "I see. Can you tell me more about that?"
+
+def chat():
+    print("Chatbot: Hi! How can I help you?")
+    while (user_message := input("You: ").strip().lower()) not in ['exit', 'quit', 'bye']:
+        print(f"\nChatbot: {get_response(user_message)}")
+
+if __name__ == "__main__":
+    chat()
